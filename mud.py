@@ -85,7 +85,7 @@ class Dungeon:
     def addPlayers(self, n=1, name=None, adventurerType=None, background=None):
         for _ in range(n):
 
-            name = input("\n\nHello, adventurer. What is thy name? \n\n")
+            name = input("\n\nHello, adventurer. What is thy name? \n\n") # multiple users can have the same name, which is an issue with the addTell() method
             background = input("\n\nOh cool. Where does thee hail from and praytell what is thy background? \n\n")
             adventurerType = input("\n\nIn a word, what type of adventurer are thee? \n\n")
 
@@ -130,9 +130,13 @@ class Dungeon:
     def addTell(self, content, listener, speaker):
         listener.dialog.addNode(content, speaker)
 
+    def printDirections(self):
+        print("\n\nEnter 'east', 'west', 'north', 'south', 'up', or 'down' to move in one of those directions.\nEnter 'where' to see which directions are available to move in.\nYou can type 'say' to tell the people in the same room something,\n'yell' to tell everyone in the world something,\nand 'tell' to tell something to someone whose name you know.\nType 'quiet' to toggle quiet mode on and off.\n\nEnter 'x' to leave this world.\n")
+
     def runGame(self):
         inp = None
-        print("And so the adventure begins! \n\n Enter 'east', 'west', 'north', 'south', 'up', or 'down' to move in one of those directions. \n\n Enter 'where' to see which directions are available to you to move in. \n\n You can type 'say' to tell the people in the same room something, 'yell' to tell everyone in the world something, and 'tell' to tell someone whose name you know something. \n\n Type 'quiet' to turn on and off quiet mode. \n\n Enter 'x' to leave this world.")
+        print("\nAnd so the adventure begins!")
+        self.printDirections()
         while inp != "x":
             if inp == "east":
                 self.testMove(self.players[1], "east")
@@ -153,9 +157,7 @@ class Dungeon:
                 self.addSays(content, self.players[1])
             elif inp == "tell":
                 person_to_speak_to = str(input("\n\nWho would you like to speak to?\n\n"))
-                print(person_to_speak_to)
                 for people in self.players:
-                    print(people, person_to_speak_to, self.players[people].name, person_to_speak_to == self.players[people].name)
                     if person_to_speak_to == self.players[people].name:
                         listener = self.players[people]
                 content = str(input("\n\nWhat would you like to say?\n\n"))
@@ -165,9 +167,14 @@ class Dungeon:
                 self.addYells(content, self.players[1])
             elif inp == "quiet":
                 self.players[1].quiet()
-            print(self.players[1].dialog.showDialog())
+            elif inp == "directions":
+                self.printDirections()
+
+            print("Moves:")
             self.whereMove(self.players[1])
-            inp = str(input("\n\nWhat would you like to do?\n\n"))
+            print("Dialog:")
+            print(self.players[1].dialog.showDialog())
+            inp = str(input("\nWhat would you like to do? (Type 'directions' to see the options.)\n\n"))
 
     class Room:
         def __init__(self, x, y, z, description=None):
